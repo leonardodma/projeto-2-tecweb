@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css?family=Inconsolata:400,700");
+
+
+html,
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #162039;
+}
+
+.appbar {
+	background-color: #588cef;	
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	box-shadow: 0 1px 24px 0 rgba(32, 32, 32, 0.75);
+	margin-bottom: 1rem;
+}
+
+.logo{
+  width: 15%;
+  margin: 1rem;
+}
+
+.subtitle{
+  align-self: center;
+  margin-left: 1rem;
+  font-size: 1rem;
+}
