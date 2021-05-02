@@ -19,5 +19,6 @@ from dogs import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('/adoptions', views.adoptions, name='adoptions'),
     path('admin/', admin.site.urls),
 ]

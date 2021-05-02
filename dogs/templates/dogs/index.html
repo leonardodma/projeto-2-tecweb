@@ -2,7 +2,25 @@
 {% load static %}
 
 {% block content %}
+<div class="wrapper">
+	<h1>Fun fact about dogs</h1>
+		<a class="fun_fact_text">{{fun_fact}}</a>
+</div> 
 <main class="container">
-
+	{% for dog in dogs %}
+		<div class="card">
+				<div class="face face1">
+						<div class="content">
+								<img src="{{dog.img_url}}">
+						</div>
+				</div>
+				<div class="face face2">
+						<div class="content">
+								<p>{{dog.breed}}</p>
+								<a href="{% url 'adoptions' %}" class="btn-1">Adopt One :)</a>
+						</div>
+				</div>
+		</div>
+	{% endfor %}
 </main>
 {% endblock %}
