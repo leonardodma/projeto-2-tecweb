@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import include, path
 from dogs import views
 
+app = views.Doglovers()
+
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('/adoptions', views.adoptions, name='adoptions'),
+    path('', app.index, name='index'),
+    path('adoptions/<str:breed>/', app.adoptions, name='adoptions'),
     path('admin/', admin.site.urls),
 ]

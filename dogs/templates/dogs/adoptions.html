@@ -3,11 +3,34 @@
 
 {% block content %}
 <main class="container_adoptions">
+{% for adoption in adoptions %}
 <div class="card-container">
-	<img class="round" src="https://images.dog.ceo/breeds/hound-afghan/n02088094_11432.jpg" alt="user" />
-	<h3>Juca</h3>
-	<h6>New York</h6>
-	<p>Dog adoption informations</p>
+	<img class="round" src="{{adoption.img_url}}" alt="user" />
+	<h3>{{adoption.name}} - {{adoption.status}}</h3>
+	<h6>{{adoption.breed_primary}} | {{adoption.breed_secondary}}</h6>
+	<div class="items-body">
+		<div class="items-body-content">
+		  	<span>Adoption site: {{adoption.adoption_url}}</span>
+		</div>
+		<div class="items-body-content">
+			<span>Gender: {{adoption.gender}}</span>
+		</div>
+		<div class="items-body-content">
+			<span>Age: {{adoption.age}}</span>
+		</div>
+		<div class="items-body-content">
+			<span>Size: {{adoption.size}}</span>
+		</div>
+		<div class="items-body-content">
+			<span>Location: {{adoption.city}}({{adoption.state}}) - {{adoption.adress}}</span>
+		</div>
+		<div class="items-body-content">
+			<span>Postcode: {{adoption.postcode}}</span>
+		</div>
+		<div class="items-body-content">
+			<span>Phone: {{adoption.phone}}</span>
+		</div>
+	</div>
 	<div class="skills">
 		<h6>Characteristics</h6>
 		<ul>
@@ -20,5 +43,6 @@
 		</ul>
 	</div>
 </div>
+{% endfor %}
 </main>
 {% endblock %}
