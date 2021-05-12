@@ -4,13 +4,45 @@ from django.http import Http404
 from requests.api import get
 from .models import *
 import requests
-import random
 import difflib
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.http import Http404
+from .serializers import AdoptionSerializer
+
+
+@api_view(['GET', 'POST'])
+def api_adoption(request, adoption_id):
+    try:
+        adoption = Adoption.objects.get(id=adoption_id)
+    except Adoption.DoesNotExist:
+        raise Http404()
+
+    serialized_adoption = AdoptionSerializer(adoption)
+
+
+    if request.method == 'POST':
+        ID = int(str(request.path).split('/')[3])
+
+    
+    adoption = Adoption.objects.get(id=ID)
+    
+    if adoption.favorite == False:
+        print('Ainda nãos estava nos favoritos')
+        adoption.favorite = True
+    else:
+        print('Removido dos favoritos')
+        adoption.favorite = False
+    
+    adoption.save()
+
+    return Response(serialized_adoption.data)
 
 
 class Doglovers():
     def __init__(self):
-        pass
+        self.load = False
 
     
     def getFact(self):
@@ -41,6 +73,8 @@ class Doglovers():
             print(f"Carregando imagens. Progresso {progresso}/{len(breeds)}")
             Dogs(breed=breed, img_url=pic).save()
             progresso += 1
+        
+        self.load = False
     
 
     def get_token(self):
@@ -61,6 +95,9 @@ class Doglovers():
     
 
     def fill_possible_breeds(self, token):
+        """
+        takes the possibles breeds from petfinder api
+        """
         PossibleBreeds.objects.all().delete()
         endpoint = f"https://api.petfinder.com/v2/types/dog/breeds"
 
@@ -75,6 +112,10 @@ class Doglovers():
         
     
     def correspondence(self):
+        """
+        Creat dict relating dogs breeds from DogApi with availables breeds in petfinder
+        to do the requests
+        """
         breeds_dogapi = []
         breeds_petfinder = []
         correspondence_breed = {}
@@ -100,6 +141,10 @@ class Doglovers():
     
 
     def correspondence_data(self):
+        """
+        Create dict relating dogs breeds from DogApi, with the breed name from the 
+        response of petfinder API
+        """
         breeds_dogapi = []
         breeds_petfinder = []
         correspondence_breed = {}
@@ -183,29 +228,44 @@ class Doglovers():
 
                     except:
                         pass
+                    
+        self.load = False
 
-
+    # Métodos de redenrização do que aparecerá na tela
     def index(self, request):
         fun_fact = self.getFact()
 
         if request.method == 'POST':
-            pass
+            update = request.POST.get('update')
+
+            if update == 'update_photos':
+                self.load = True
+                self.fillDogs()
+                
+                if self.load:
+                    return render(request, 'dogs/loading.html')
+
+            if update == 'update_adoptions':
+                self.load = True
+                self.fill_adoptions()
+                
+                if self.load:
+                    return render(request, 'dogs/loading.html')
+            
+            return redirect('index')
         else:
-            print('---------------------------------------')
-            #Adoption.objects.all().delete()
-            #fill_dogs()
-
-            #self.get_adoptions(self.get_token(), 'shih-tzu')
-            #fill_possible_breeds(get_token())
-
-            #self.fill_adoptions()
-            print('---------------------------------------')
             all_dogs = Dogs.objects.all()
-            return render(request, 'dogs/index.html', {'fun_fact': fun_fact, 'dogs': all_dogs})
+            dogs_avalibles = self.correspondence_data()
+            availables = []
+
+            for dog in all_dogs:
+                if dog.breed in dogs_avalibles.keys():
+                    availables.append(dog)
+
+            return render(request, 'dogs/index.html', {'fun_fact': fun_fact, 'dogs': availables})
 
 
     def adoptions(self, request, breed):
-
         all_adoptions = Adoption.objects.all()
         adoptions_breed = []
 
@@ -216,16 +276,19 @@ class Doglovers():
             if key == breed:
                 possible_breeds = value
 
-        print(breed)
-        print(possible_breeds)
-
-        if breed in possible_breeds:
-            print('Deu bom')
-
         for adoption in all_adoptions:
-            print(adoption.breed_primary)
             if str(adoption.breed_primary) in possible_breeds or str(adoption.breed_secondary) in possible_breeds:
                 adoptions_breed.append(adoption)
 
-        print(adoptions_breed)
-        return render(request, 'dogs/adoptions.html', {'adoptions': adoptions_breed})
+        return render(request, 'dogs/adoptions.html', {'breed': breed,  'adoptions': adoptions_breed})
+
+
+    def favorites(self, request):
+        favorites = []
+        all_adoptions = Adoption.objects.all()
+
+        for adoption in all_adoptions:
+            if adoption.favorite == True:
+                favorites.append(adoption)
+
+        return render(request, 'dogs/favorites.html', {'adoptions': favorites})

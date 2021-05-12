@@ -39,6 +39,8 @@ class Adoption(models.Model):
     special_needs = models.BooleanField()
     shots_current = models.BooleanField()
 
+    favorite = models.BooleanField(default=False)
+
     
     def __str__(self):
-        return f'{self.name}. {self.breed_primary}'
+        return f'{self.name}. {self.breed_primary} - {self.id}'

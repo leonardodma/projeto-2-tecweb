@@ -20,7 +20,9 @@ from dogs import views
 app = views.Doglovers()
 
 urlpatterns = [
+    path('api/adoptions/<int:adoption_id>/', views.api_adoption),
     path('', app.index, name='index'),
     path('adoptions/<str:breed>/', app.adoptions, name='adoptions'),
+    path('favorites/', app.favorites, name='favorites'),
     path('admin/', admin.site.urls),
 ]

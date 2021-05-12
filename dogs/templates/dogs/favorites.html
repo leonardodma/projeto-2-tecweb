@@ -1,17 +1,8 @@
 {% extends "dogs/base.html" %} {% load static %} {% block content %}
-<h1>{{breed}}</h1>
+<h1>Favorites</h1>
 <main class="container_adoptions">
   {% for adoption in adoptions %}
   <div class="card-container">
-    {% if adoption.favorite %}
-    <div class="heart-conteiner">
-      <input type="checkbox" class="like-button2" data-id="{{adoption.id}}"></input>
-    </div>
-    {% else %}
-    <div class="heart-conteiner">
-      <input type="checkbox" class="like-button" data-id="{{adoption.id}}"></input>
-    </div>
-    {% endif %}
     <img class="round" src="{{adoption.img_url}}" alt="user" />
     <h3>{{adoption.name}} - {{adoption.status}}</h3>
     <h6>{{adoption.breed_primary}} | {{adoption.breed_secondary}}</h6>
