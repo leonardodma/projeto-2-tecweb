@@ -236,6 +236,7 @@ class Doglovers():
         fun_fact = self.getFact()
 
         if request.method == 'POST':
+            self.fill_possible_breeds(self.get_token())
             update = request.POST.get('update')
 
             if update == 'update_photos':
@@ -254,7 +255,6 @@ class Doglovers():
             
             return redirect('index')
         else:
-            #self.fill_possible_breeds(self.get_token())
             all_dogs = Dogs.objects.all()
             dogs_avalibles = self.correspondence_data()
             availables = []
