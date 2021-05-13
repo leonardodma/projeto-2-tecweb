@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import dogs
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*y))r*3*r_ddn%#5rxbx46)5^-wo$=e&5l#e#u*#n9h+#3(i6j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dog-lovers.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'doglovers.urls'
@@ -76,11 +78,34 @@ WSGI_APPLICATION = 'doglovers.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+"""
+
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dogs',
+        'USER': 'dogsuser',
+        'PASSWORD': 'dogssenha',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+"""
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://localhost/dogs?user=dogsuser&password=dogssenha',
+        conn_max_age=600,
+        ssl_require=not DEBUG
+    )
 }
 
 
@@ -121,6 +146,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

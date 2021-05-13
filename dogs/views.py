@@ -254,6 +254,7 @@ class Doglovers():
             
             return redirect('index')
         else:
+            #self.fill_possible_breeds(self.get_token())
             all_dogs = Dogs.objects.all()
             dogs_avalibles = self.correspondence_data()
             availables = []
