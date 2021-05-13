@@ -1,5 +1,10 @@
 {% extends "dogs/base.html" %} {% load static %} {% block content %}
 <h1>{{breed}}</h1>
+<form method="post" class="update_button_conteiner">
+  {% csrf_token %}
+  <input type="hidden" value="update_adoptions" name="update" />
+  <button class="button" type="submit">Update adoptions</button>
+</form>
 <main class="container_adoptions">
   {% for adoption in adoptions %}
   <div class="card-container">

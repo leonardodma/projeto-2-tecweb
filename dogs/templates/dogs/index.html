@@ -4,16 +4,6 @@
   <a class="fun_fact_text">{{fun_fact}}</a>
 </div>
 <div class="buttons-conteiners">
-  <form method="post" class="update_button_conteiner">
-    {% csrf_token %}
-    <input type="hidden" value="update_photos" name="update" />
-    <button class="button" type="submit">Update pictures</button>
-  </form>
-  <form method="post" class="update_button_conteiner">
-    {% csrf_token %}
-    <input type="hidden" value="update_adoptions" name="update" />
-    <button class="button" type="submit">Update adoptions</button>
-  </form>
 </div>
 <main class="container">
   {% for dog in dogs %}
@@ -26,6 +16,11 @@
     <div class="face face2">
       <div class="content">
         <p>{{dog.breed}}</p>
+        <form method="post" class="update_button_conteiner">
+          {% csrf_token %}
+          <input type="hidden" value="{{dog.breed}}" name="update_pic" />
+          <button class="button" type="submit">Update Picture</button>
+        </form>
         <a href="{% url 'adoptions' breed=dog.breed %}" class="btn-1"
           >Adopt One :)</a
         >
