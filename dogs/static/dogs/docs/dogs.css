@@ -138,11 +138,11 @@ h1 {
 
 .container .card .face.face2 .content p {
   margin: auto;
-  padding: 1rem;
+  padding: 0.5rem;
   align-self: center;
   color: #fff;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1rem;
   text-transform: uppercase;
 }
 
@@ -157,7 +157,7 @@ h1 {
   background: #4da8da;
   color: #ffffff;
   cursor: pointer;
-  font-size: 2em;
+  font-size: 1.5rem;
   padding: 1rem;
   border: 0;
   transition: all 0.5s;
@@ -225,6 +225,7 @@ p {
   text-decoration: none;
   text-indent: initial;
   color: #ffffff;
+  overflow-wrap: break-word;
 }
 
 .url:hover {
@@ -288,7 +289,6 @@ p {
 .items-body-content {
   padding: 0.5rem;
   display: grid;
-  grid-template-columns: 10fr 1fr;
   font-size: 0.75rem;
   grid-gap: 10px;
   border: 1px solid transparent;
@@ -308,25 +308,20 @@ p {
 }
 
 /* Update button */
-.buttons-conteiners {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
 
 .update_button_conteiner {
   width: auto;
   display: flex;
   align-items: center;
-  margin: 1rem;
+  margin: 0.3rem;
   justify-content: space-evenly;
 }
 
 .button {
   width: 200px;
   height: 36px;
-  border-radius: 18px;
-  background-color: #1c89ff;
+  border-radius: 10px;
+  background-color: #4da8da;
   border: solid 1px transparent;
   color: #fff;
   font-size: 18px;

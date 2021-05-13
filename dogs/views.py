@@ -25,7 +25,7 @@ def api_adoption(request, adoption_id):
     if request.method == 'POST':
         ID = int(str(request.path).split('/')[3])
 
-    
+
     adoption = Adoption.objects.get(id=ID)
     
     if adoption.favorite == False:
@@ -42,7 +42,7 @@ def api_adoption(request, adoption_id):
 
 class Doglovers():
     def __init__(self):
-        self.load = False
+        pass
 
     
     def getFact(self):
@@ -73,8 +73,14 @@ class Doglovers():
             print(f"Carregando imagens. Progresso {progresso}/{len(breeds)}")
             Dogs(breed=breed, img_url=pic).save()
             progresso += 1
-        
-        self.load = False
+
+
+    def updatePicture(self, breed):
+        pic_endpoint = f"https://dog.ceo/api/breed/{breed}/images/random"
+        pic = requests.get(pic_endpoint).json()['message']
+        dog = Dogs.objects.get(breed=breed)
+        dog.img_url = pic
+        dog.save()
     
 
     def get_token(self):
@@ -156,7 +162,7 @@ class Doglovers():
             breeds_petfinder.append(element.breed)
 
 
-        for element in breeds_dogapi:
+        for element in sorted(breeds_dogapi):
             search_strings = []
 
             matches = difflib.get_close_matches(element, breeds_petfinder)
@@ -189,85 +195,94 @@ class Doglovers():
             return information
 
 
-    def fill_adoptions(self):
-        Adoption.objects.all().delete()
+    def fill_adoptions_breed(self, breed):
+        #Adoption.objects.get(id=ID)
+        #Adoption.objects.all().delete()
 
         breeds_correspondence = self.correspondence()
+        data_correspondence = self.correspondence_data()
 
-        for values in breeds_correspondence.values():
-            print(values)
-            for v in values:
-                print(v)
-                json_response = self.get_adoptions(self.get_token(), v)
+        print(data_correspondence[breed])
+        print(breeds_correspondence[breed])
+
+        
+        Adoption.objects.filter(breed_primary__in=data_correspondence[breed]).delete()
+        Adoption.objects.filter(breed_secondary__in=data_correspondence[breed]).delete()
+        
+        for value in breeds_correspondence[breed]:
+            print(value)
+
+            json_response = self.get_adoptions(self.get_token(), value)
                 
-                for adoption in json_response:
-                    try:
-                        name = self.set_value(adoption['name'])
-                        status = self.set_value(adoption['status'])
-                        adoption_url = self.set_value(adoption['url'])
-                        breed_primary = self.set_value(adoption['breeds']['primary'])
-                        breed_secondary = self.set_value(adoption['breeds']['secondary'])
-                        age = self.set_value(adoption['age'])
-                        gender = self.set_value(adoption['gender'])
-                        size = self.set_value(adoption['size'])
-                        img_url = self.set_value(adoption['photos'][0]['medium'])
-                        phone = self.set_value(adoption['contact']['phone'])
-                        state = self.set_value(adoption['contact']['address']['state'])
-                        city = self.set_value(adoption['contact']['address']['city'])
-                        postcode = self.set_value(adoption['contact']['address']['postcode'])
-                        adress = self.set_value(adoption['contact']['address']['address1'])
+            for adoption in json_response:
+                try:
+                    name = self.set_value(adoption['name'])
+                    status = self.set_value(adoption['status'])
+                    adoption_url = self.set_value(adoption['url'])
+                    breed_primary = self.set_value(adoption['breeds']['primary'])
+                    breed_secondary = self.set_value(adoption['breeds']['secondary'])
+                    age = self.set_value(adoption['age'])
+                    gender = self.set_value(adoption['gender'])
+                    size = self.set_value(adoption['size'])
+                    img_url = self.set_value(adoption['photos'][0]['medium'])
+                    phone = self.set_value(adoption['contact']['phone'])
+                    state = self.set_value(adoption['contact']['address']['state'])
+                    city = self.set_value(adoption['contact']['address']['city'])
+                    postcode = self.set_value(adoption['contact']['address']['postcode'])
+                    adress = self.set_value(adoption['contact']['address']['address1'])
 
-                        spayed_neutered = self.set_value(adoption['attributes']['spayed_neutered'])
-                        house_trained = self.set_value(adoption['attributes']['house_trained'])
-                        special_needs = self.set_value(adoption['attributes']['special_needs'])
-                        shots_current = self.set_value(adoption['attributes']['shots_current'])
+                    spayed_neutered = self.set_value(adoption['attributes']['spayed_neutered'])
+                    house_trained = self.set_value(adoption['attributes']['house_trained'])
+                    special_needs = self.set_value(adoption['attributes']['special_needs'])
+                    shots_current = self.set_value(adoption['attributes']['shots_current'])
 
-                        Adoption(name=name, status=status, adoption_url=adoption_url, breed_primary=breed_primary, breed_secondary=breed_secondary, 
-                        age=age, gender=gender, size=size, img_url=img_url, phone=phone, state=state, city=city, postcode=postcode, adress=adress, 
-                        spayed_neutered=spayed_neutered, house_trained=house_trained, special_needs=special_needs, shots_current=shots_current ).save()
+                    Adoption(name=name, status=status, adoption_url=adoption_url, breed_primary=breed_primary, breed_secondary=breed_secondary, 
+                    age=age, gender=gender, size=size, img_url=img_url, phone=phone, state=state, city=city, postcode=postcode, adress=adress, 
+                    spayed_neutered=spayed_neutered, house_trained=house_trained, special_needs=special_needs, shots_current=shots_current ).save()
 
-                    except:
-                        pass
-                    
-        self.load = False
-
+                except:
+                    pass
+            
+                
     # Métodos de redenrização do que aparecerá na tela
     def index(self, request):
         fun_fact = self.getFact()
 
         if request.method == 'POST':
-            self.fill_possible_breeds(self.get_token())
-            update = request.POST.get('update')
+            breed = request.POST.get('update_pic')
+            self.updatePicture(breed)
 
-            if update == 'update_photos':
-                self.load = True
-                self.fillDogs()
-                
-                if self.load:
-                    return render(request, 'dogs/loading.html')
-
-            if update == 'update_adoptions':
-                self.load = True
-                self.fill_adoptions()
-                
-                if self.load:
-                    return render(request, 'dogs/loading.html')
-            
             return redirect('index')
-        else:
-            all_dogs = Dogs.objects.all()
-            dogs_avalibles = self.correspondence_data()
-            availables = []
 
-            for dog in all_dogs:
-                if dog.breed in dogs_avalibles.keys():
-                    availables.append(dog)
+        if not Dogs.objects.exists():
+            self.fill_possible_breeds(self.get_token())
+            self.fillDogs()
 
-            return render(request, 'dogs/index.html', {'fun_fact': fun_fact, 'dogs': availables})
+        all_dogs = Dogs.objects.all().order_by("breed")
+        dogs_avalibles = self.correspondence_data()
+        availables = []
+
+        for dog in all_dogs:
+            if dog.breed in dogs_avalibles.keys():
+                availables.append(dog)
+
+        return render(request, 'dogs/index.html', {'fun_fact': fun_fact, 'dogs': availables})
 
 
     def adoptions(self, request, breed):
-        all_adoptions = Adoption.objects.all()
+
+        if request.method == 'POST':
+            update = request.POST.get('update')
+            print(update)
+
+            if update == 'update_adoptions':
+                self.fill_possible_breeds(self.get_token())
+                self.fill_adoptions_breed(breed)
+
+            return redirect('adoptions', breed)
+
+
+        all_adoptions = Adoption.objects.all().order_by("name")
         adoptions_breed = []
 
         possible_breeds = []

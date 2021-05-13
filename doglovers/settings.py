@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*y))r*3*r_ddn%#5rxbx46)5^-wo$=e&5l#e#u*#n9h+#3(i6j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['dog-lovers.herokuapp.com', 'localhost', '127.0.0.1']
 
@@ -87,7 +87,7 @@ DATABASES = {
 }
 """
 
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -98,8 +98,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-"""
 
+"""
 DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://localhost/dogs?user=dogsuser&password=dogssenha',
@@ -107,6 +107,7 @@ DATABASES = {
         ssl_require=not DEBUG
     )
 }
+"""
 
 
 # Password validation
