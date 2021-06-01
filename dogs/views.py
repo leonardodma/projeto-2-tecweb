@@ -21,21 +21,20 @@ def api_adoption(request, adoption_id):
 
     serialized_adoption = AdoptionSerializer(adoption)
 
-
+    
     if request.method == 'POST':
         ID = int(str(request.path).split('/')[3])
 
-
-    adoption = Adoption.objects.get(id=ID)
-    
-    if adoption.favorite == False:
-        print('Ainda nãos estava nos favoritos')
-        adoption.favorite = True
-    else:
-        print('Removido dos favoritos')
-        adoption.favorite = False
-    
-    adoption.save()
+        adoption = Adoption.objects.get(id=ID)
+        
+        if adoption.favorite == False:
+            print('Ainda nãos estava nos favoritos')
+            adoption.favorite = True
+        else:
+            print('Removido dos favoritos')
+            adoption.favorite = False
+        
+        adoption.save()
 
     return Response(serialized_adoption.data)
 
@@ -200,10 +199,11 @@ class Doglovers():
         #Adoption.objects.all().delete()
 
         breeds_correspondence = self.correspondence()
+        print(f'Correspondência com string de pesquisa do endpoint: {breeds_correspondence}')
+        print('\n\n')
         data_correspondence = self.correspondence_data()
+        print(f'Correspondência dados da resposta da API: {data_correspondence}')
 
-        print(data_correspondence[breed])
-        print(breeds_correspondence[breed])
 
         
         Adoption.objects.filter(breed_primary__in=data_correspondence[breed]).delete()
@@ -260,6 +260,11 @@ class Doglovers():
 
         all_dogs = Dogs.objects.all().order_by("breed")
         dogs_avalibles = self.correspondence_data()
+
+        print('\n\n')
+        print(dogs_avalibles)
+        print('\n\n')
+
         availables = []
 
         for dog in all_dogs:
