@@ -411,3 +411,13 @@ p {
 .like-button2.liked::after {
   transform: translate(-50%, -50%) scale(1.1);
 }
+
+
+
+.tecweb-seal{
+  height: 10rem;
+  width: 10rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}

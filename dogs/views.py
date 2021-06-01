@@ -43,7 +43,31 @@ class Doglovers():
     def __init__(self):
         pass
 
+    def getSealToken(self):
+        username = "leonardodma"
+        endpoint = f"http://54.88.109.168/{username}/token"
+        response = requests.get(endpoint).json()['token']
+
+        return response
+
+
+    def createSeal(self, token):
+        username = "leonardodma"
+        endpoint = f"http://54.88.109.168/{username}/image"
+
+        #headers = {'Content-type': 'application/json'}
+        payload = {"token": token}
+        #data = payload.dumps(payload)
+
+        request = requests.post(endpoint, json=payload).json()['image_uri']
+
+        return request
     
+    def getSealSrc(self, img_name):
+        src = "http://54.88.109.168"+img_name
+        return src
+
+
     def getFact(self):
         """
         https://github.com/DukeNgn/Dog-facts-API
@@ -246,6 +270,12 @@ class Doglovers():
                 
     # Métodos de redenrização do que aparecerá na tela
     def index(self, request):
+        token = self.getSealToken()
+        img_name = self.createSeal(token)
+        seal_src = self.getSealSrc(img_name)
+        print(seal_src)
+
+
         fun_fact = self.getFact()
 
         if request.method == 'POST':
@@ -261,9 +291,6 @@ class Doglovers():
         all_dogs = Dogs.objects.all().order_by("breed")
         dogs_avalibles = self.correspondence_data()
 
-        print('\n\n')
-        print(dogs_avalibles)
-        print('\n\n')
 
         availables = []
 
@@ -271,7 +298,7 @@ class Doglovers():
             if dog.breed in dogs_avalibles.keys():
                 availables.append(dog)
 
-        return render(request, 'dogs/index.html', {'fun_fact': fun_fact, 'dogs': availables})
+        return render(request, 'dogs/index.html', {'fun_fact': fun_fact, 'dogs': availables, 'seal_src':seal_src})
 
 
     def adoptions(self, request, breed):
