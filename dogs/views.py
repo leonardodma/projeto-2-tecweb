@@ -271,9 +271,14 @@ class Doglovers():
     # Métodos de redenrização do que aparecerá na tela
     def index(self, request):
         token = self.getSealToken()
+        print("-----------------------------------")
+        print(f"TOKEN: {token}")
+        print("-----------------------------------")
         img_name = self.createSeal(token)
         seal_src = self.getSealSrc(img_name)
-        print(seal_src)
+        print("-----------------------------------")
+        print(f"IMG_SRC: {seal_src}")
+        print("-----------------------------------")
 
 
         fun_fact = self.getFact()
